@@ -24,8 +24,8 @@ class DatabaseSeeder extends Seeder
 			CategorySeed::class
 		]);
 
-		User::factory(100)->create();
-		Author::factory(100)->create();
+		User::factory(10)->create();
+		Author::factory(10)->create();
 
 		// \App\Models\User::factory()->create([
 		//     'name' => 'Test User',
