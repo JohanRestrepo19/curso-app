@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\CreateUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+/* use Illuminate\Http\Request; */
 
 class UserController extends Controller
 {
@@ -19,14 +21,14 @@ class UserController extends Controller
 		return response()->json(['user' => $user]);
 	}
 
-	public function createUser(Request $request)
+	public function createUser(CreateUserRequest $request)
 	{
 		$user = new User($request->all());
 		$user->save();
 		return response()->json(['user' => $user], 201);
 	}
 
-	public function updateUser(User $user, Request $request)
+	public function updateUser(User $user, UpdateUserRequest $request)
 	{
 		$user->update($request->all());
 		return response()->json(['user' => $user->refresh()], 201);

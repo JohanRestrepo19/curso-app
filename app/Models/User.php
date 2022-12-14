@@ -39,7 +39,7 @@ class User extends Authenticatable
 		return "{$this->name} {$this->last_name}";
 	}
 
-	// MUtator (create - update)
+	// Mutator (create - update)
 	public function setPasswordAttribute($value)
 	{
 		$this->attributes['password'] = bcrypt($value);
