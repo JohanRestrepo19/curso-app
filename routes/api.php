@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LendController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,4 +15,12 @@ Route::group(['prefix' => 'Users', 'controller' => UserController::class], funct
 	Route::post('/CreateUser', 'createUser');
 	Route::put('/UpdateUser/{user}', 'updateUser');
 	Route::delete('/DeleteUser/{user}', 'deleteUser');
+	Route::get('/GetAllLendsByUser/{user}', 'getAllLendsByUser');
+	Route::get('/GetAllUsersWithLends/', 'getAllUsersWithLends');
+});
+
+
+Route::group(['prefix' => 'Lends', 'controller' => LendController::class], function () {
+
+	Route::post('/CreateLend', 'createLend');
 });
