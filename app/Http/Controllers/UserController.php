@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
-/* use Illuminate\Http\Request; */
 
 class UserController extends Controller
 {
-	//
+
+	public function showAllUsers()
+	{
+		$users = $this->getAllUsers()->original['users'];
+		return view('users.index', compact('users'));
+	}
+
 	public function getAllUsers()
 	{
 		$users = User::all();
@@ -19,6 +24,11 @@ class UserController extends Controller
 	public function getAnUser(User $user)
 	{
 		return response()->json(['user' => $user]);
+	}
+
+	public function showCreateUser()
+	{
+		return view('users.create-user');
 	}
 
 	public function createUser(CreateUserRequest $request)
