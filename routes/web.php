@@ -21,6 +21,10 @@ Route::group(['prefix' => '/users', 'controller' => UserController::class], func
 	Route::delete('/deleteUser/{user}', 'deleteUser')->name('user.delete');
 });
 
+Route::group(['prefix' => '/books', 'controller' => BookController::class], function () {
+	Route::get('/', 'showAllBooks')->name('books');
+});
+
 Route::group(['controller' => LoginController::class], function () {
 	// Login Routes...
 	Route::get('login', 'showLoginForm')

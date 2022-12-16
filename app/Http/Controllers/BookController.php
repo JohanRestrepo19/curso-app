@@ -7,9 +7,14 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-	private function getAllBooks()
+	public function showAllBooks()
 	{
-		$books = Book::all();
+		return view('books.index');
+	}
+
+	public function getAllBooks()
+	{
+		$books = Book::with(['author'])->get();
 		return response()->json(['books' => $books], 200);
 	}
 

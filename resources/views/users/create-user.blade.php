@@ -11,5 +11,6 @@
 					<x-users.form-user />
 				</form>
 			</div>
+		</div>
 	</section>
 </x-app>
