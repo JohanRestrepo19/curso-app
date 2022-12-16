@@ -27,6 +27,9 @@
 
 <!-- Content -->
 <main id="app">
+	<div class="container mt-4">
+		<x-alerts />
+	</div>
 	{{$slot}}
 </main>
 

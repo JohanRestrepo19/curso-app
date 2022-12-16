@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -35,19 +36,33 @@ class UserController extends Controller
 	{
 		$user = new User($request->all());
 		$user->save();
-		return response()->json(['user' => $user], 201);
+		if ($request->ajax()) return response()->json(['user' => $user], 201);
+		return back()->with('success',  'Usuario creado');
+	}
+
+	public function showUpdateUser(User $user)
+	{
+		return view('users.edit-user', compact('user'));
 	}
 
 	public function updateUser(User $user, UpdateUserRequest $request)
 	{
-		$user->update($request->all());
-		return response()->json(['user' => $user->refresh()], 201);
+		$allRequestInfo = $request->all();
+
+		if (isset($allRequestInfo['password']))
+			if (!$allRequestInfo['password']) unset($allRequestInfo['password']);
+
+		$user->update($allRequestInfo);
+
+		if ($request->ajax()) return response()->json(['user' => $user->refresh()], 201);
+		return back()->with('success', 'Usuario editado');
 	}
 
-	public function deleteUser(User $user)
+	public function deleteUser(User $user, Request $request)
 	{
 		$user = $user->delete();
-		return response()->json(['deleted' => $user], 204);
+		if ($request->ajax()) return response()->json(['deleted' => $user], 204);
+		return back()->with('success', 'Usuario eliminado');
 	}
 
 	public function getAllLendsByUser(User $user)

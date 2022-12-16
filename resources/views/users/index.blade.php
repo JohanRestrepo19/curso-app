@@ -17,6 +17,7 @@
 						<th scope="col">Nombre</th>
 						<th scope="col">Apellido</th>
 						<th scope="col">Correo</th>
+						<th scope="col">Acciones</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -26,6 +27,15 @@
 						<td>{{$user->name}}</td>
 						<td>{{$user->last_name}}</td>
 						<td>{{$user->email}}</td>
+						<td>
+
+							<form action="{{route('user.delete', ['user' => $user->id])}}" method="post">
+								@csrf
+								@method('delete')
+								<a href="{{route('user.update', ['user' => $user->id])}}" class="btn btn-info btn-sm me-2">Editar</a>
+								<button type="submit" class="btn btn-danger btn-sm ms-2">Eliminar</button>
+							</form>
+						</td>
 					</tr>
 					@endforeach
 				</tbody>

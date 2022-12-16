@@ -13,6 +13,12 @@ Route::get('/', [BookController::class, 'showHomeWithBooks'])->name('home');
 Route::group(['prefix' => '/users', 'controller' => UserController::class], function () {
 	Route::get('/', 'showAllUsers')->name('users');
 	Route::get('/createUser', 'showCreateUser')->name('user.create');
+	Route::post('/createUser', 'createUser')->name('user.create.post');
+
+	Route::get('/updateUser/{user}', 'showUpdateUser')->name('user.update');
+	Route::put('/updateUser/{user}', 'updateUser')->name('user.update.put');
+
+	Route::delete('/deleteUser/{user}', 'deleteUser')->name('user.delete');
 });
 
 Route::group(['controller' => LoginController::class], function () {
