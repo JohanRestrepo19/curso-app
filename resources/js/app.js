@@ -1,5 +1,6 @@
 import './bootstrap'
 import { createApp } from 'vue'
+import vSelect from 'vue-select'
 import ExampleComponent from './components/ExampleComponent.vue'
 import BooksIndex from './components/books/BooksIndex.vue'
 
@@ -11,4 +12,4 @@ const app = createApp({
   }
 })
 
-app.mount('#app')
+app.component('v-select', vSelect).mount('#app')

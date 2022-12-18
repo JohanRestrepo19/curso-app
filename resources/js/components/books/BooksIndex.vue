@@ -47,6 +47,10 @@
       handleOpenModal() {
         this.isModalLoaded = true
         setTimeout(this.handleMountModal, 100)
+      },
+      async handleCloseModal() {
+        this.modal.hide()
+        this.books = await this.fetchBooks()
       }
     }
   }

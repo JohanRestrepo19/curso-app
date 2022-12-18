@@ -25,7 +25,9 @@ Route::group(['prefix' => 'Users', 'controller' => UserController::class], funct
 
 // Libros
 Route::group(['prefix' => '/Books', 'controller' => BookController::class], function () {
-  Route::get('/getAllBooks', 'getAllBooks')->name('books');
+  Route::get('/getAllBooks', 'getAllBooks');
+  Route::post('/SaveBook', 'saveBook');
+  Route::put('/UpdateBook', 'updateBook');
 });
 
 // Categorias

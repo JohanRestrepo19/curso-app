@@ -1,5 +1,6 @@
 <script>
   import axios from 'axios'
+  import swal from 'sweetalert2'
 
   export default {
     data() {
@@ -43,6 +44,31 @@
           console.error(error)
           return []
         }
+      },
+      async handleSubmit(event) {
+        event.preventDefault()
+
+        try {
+          this.isCreating
+            ? await axios.post('/api/Books/SaveBook', this.book)
+            : await axios.put(`/api/Books/UpdateBook/${this.book.id}`, this.book)
+
+          swal.fire({
+            icon: 'success',
+            title: 'Felicitaciones!',
+            text: 'Tu libro fue almacenado',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.$parent.handleCloseModal()
+        } catch (error) {
+          console.error(error)
+          swal.fire({
+            icon: 'error',
+            title: 'Ops...',
+            text: 'Algo salió mal'
+          })
+        }
       }
     }
   }
@@ -85,24 +111,24 @@
 
             <!-- Autor -->
             <div class="mb-3">
-              <label for="author_id" class="form-label">Categoria</label>
-              <select class="form-control" id="author_id" v-model="book.author_id">
-                <option disabled value="">Selecciona un autor</option>
-                <option v-for="author in authors" :key="author.id">
-                  {{ author.name }}
-                </option>
-              </select>
+              <label class="form-label">Autor</label>
+              <v-select
+                :options="authors"
+                label="name"
+                :reduce="author => author.id"
+                v-model="book.author_id"
+              />
             </div>
 
             <!-- Categoria -->
             <div class="mb-3">
-              <label for="category_id" class="form-label">Categoria</label>
-              <select class="form-control" id="category_id" v-model="book.category_id">
-                <option disabled value="">Selecciona una categoria</option>
-                <option v-for="category in categories" :key="category.id">
-                  {{ category.name }}
-                </option>
-              </select>
+              <label class="form-label">Categoria</label>
+              <v-select
+                :options="categories"
+                label="name"
+                :reduce="category => category.id"
+                v-model="book.category_id"
+              />
             </div>
 
             <!-- Stock -->
@@ -114,7 +140,7 @@
             <hr />
 
             <div class="d-flex justify-content-evenly">
-              <button type="submit" class="btn btn-primary">
+              <button type="submit" class="btn btn-primary" @click="handleSubmit">
                 {{ `${isCreating ? 'Crear' : 'Editar'}` }} Libro
               </button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
