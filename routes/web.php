@@ -8,12 +8,24 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Role;
+
+Route::get('/test', function () {
+  /* return Role::all()->pluck('name'); */
+  /* $users = User::get(); */
+  /* foreach ($users as $user) { */
+  /*   if ($user->number_id == 1234567890) $user->assignRole('admin'); */
+  /*   else $user->assignRole('user'); */
+  /* } */
+  /* Role::create(['name' => 'user']); */
+});
 
 Route::get('/', [BookController::class, 'showHomeWithBooks'])->name('home');
 
 // Usuarios
-Route::group(['prefix' => '/users', 'controller' => UserController::class], function () {
+Route::group(['prefix' => '/users', 'middleware' => ['auth', 'role:admin'], 'controller' => UserController::class], function () {
   Route::get('/', 'showAllUsers')->name('users');
   Route::get('/createUser', 'showCreateUser')->name('user.create');
   Route::post('/createUser', 'createUser')->name('user.create.post');
@@ -23,7 +35,7 @@ Route::group(['prefix' => '/users', 'controller' => UserController::class], func
 });
 
 // Libros
-Route::group(['prefix' => '/books', 'controller' => BookController::class], function () {
+Route::group(['prefix' => '/books', 'middleware' => ['auth', 'role:admin'], 'controller' => BookController::class], function () {
   Route::get('/', 'showAllBooks')->name('books');
   Route::get('/getAllBooks', 'getAllBooks');
   Route::get('/getBook/{book}', 'getBook');
