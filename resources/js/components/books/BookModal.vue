@@ -3,12 +3,14 @@
   import swal from 'sweetalert2'
 
   export default {
+    props: ['book_data'],
     data() {
       return {
         isCreating: true,
         categories: [],
         authors: [],
-        book: {}
+        book: {},
+        bookImage: null
       }
     },
     created() {
@@ -22,12 +24,18 @@
         ])
         this.categories = categories
         this.authors = authors
+        this.setBook()
+      },
+      setBook() {
+        if (!this.book_data) return
+        this.book = { ...this.book_data }
+        this.isCreating = false
       },
       async fetchCategories() {
         try {
           const {
             data: { categories }
-          } = await axios.get('/api/Categories/GetAllCategories')
+          } = await axios.get('/categories/GetAllCategories')
           return categories
         } catch (error) {
           console.error(error)
@@ -38,7 +46,7 @@
         try {
           const {
             data: { authors }
-          } = await axios.get('/api/Authors/GetAllAuthors')
+          } = await axios.get('/authors/GetAllAuthors')
           return authors
         } catch (error) {
           console.error(error)
@@ -48,10 +56,11 @@
       async handleSubmit(event) {
         event.preventDefault()
 
+        const formData = this.makeFormData()
         try {
           this.isCreating
-            ? await axios.post('/api/Books/SaveBook', this.book)
-            : await axios.put(`/api/Books/UpdateBook/${this.book.id}`, this.book)
+            ? await axios.post('/books/SaveBook', formData)
+            : await axios.post(`/books/UpdateBook/${this.book.id}`, formData)
 
           swal.fire({
             icon: 'success',
@@ -69,6 +78,21 @@
             text: 'Algo salió mal'
           })
         }
+      },
+      handleLoadImage(event) {
+        this.bookImage = event.target.files[0]
+      },
+      makeFormData() {
+        const formData = new FormData()
+
+        if (this.bookImage) formData.append('image', this.bookImage, this.bookImage.name)
+        formData.append('title', this.book.title)
+        formData.append('stock', this.book.stock)
+        formData.append('description', this.book.description)
+        formData.append('category_id', this.book.category_id)
+        formData.append('author_id', this.book.author_id)
+
+        return formData
       }
     }
   }
@@ -90,7 +114,19 @@
         <!-- Modal body -->
         <div class="modal-body">
           <!-- Form -->
-          <form>
+          <form enctype="multipart/form-data">
+            <!-- Imagen -->
+            <div class="mb-3">
+              <label for="title" class="form-label">Imagen</label>
+              <input
+                type="file"
+                class="form-control"
+                id="file"
+                accept="image/*"
+                @change="handleLoadImage"
+              />
+            </div>
+
             <!-- Titulo -->
             <div class="mb-3">
               <label for="title" class="form-label">Titulo</label>

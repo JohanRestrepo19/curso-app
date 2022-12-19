@@ -12,7 +12,8 @@
         books: [],
         loadingBooks: true,
         isModalLoaded: false,
-        modal: null
+        modal: null,
+        book: null
       }
     },
     mounted() {
@@ -27,12 +28,15 @@
         try {
           const {
             data: { books }
-          } = await axios.get('/api/Books/getAllBooks')
+          } = await axios.get('books/getAllBooks')
           return books
         } catch (error) {
           console.error(error)
           return []
         }
+      },
+      async handleRefreshBooks() {
+        this.books = await this.fetchBooks()
       },
       handleMountModal() {
         this.modal = new Modal(document.getElementById('bookModal'), {
@@ -42,6 +46,7 @@
 
         document.getElementById('bookModal').addEventListener('hidden.bs.modal', () => {
           this.isModalLoaded = false
+          this.book = null
         })
       },
       handleOpenModal() {
@@ -51,6 +56,10 @@
       async handleCloseModal() {
         this.modal.hide()
         this.books = await this.fetchBooks()
+      },
+      handleEditBook(book) {
+        this.book = book
+        this.handleOpenModal()
       }
     }
   }
@@ -75,7 +84,7 @@
       </section>
     </div>
     <section v-if="isModalLoaded">
-      <book-modal />
+      <book-modal :book_data="book" />
     </section>
   </div>
 </template>
