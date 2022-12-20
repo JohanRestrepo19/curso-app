@@ -6,10 +6,10 @@ import BooksIndex from './components/books/BooksIndex.vue'
 
 // Components
 const app = createApp({
-  components: {
-    ExampleComponent,
-    BooksIndex
-  }
+	components: {
+		ExampleComponent,
+		BooksIndex
+	}
 })
 
 app.component('v-select', vSelect).mount('#app')

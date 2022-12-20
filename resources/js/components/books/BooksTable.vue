@@ -1,97 +1,120 @@
 <script>
-  import axios from 'axios'
-  import swal from 'sweetalert2'
-  export default {
-    name: 'BooksTable',
-    props: { books: { type: Array } },
-    components: [],
-    data() {
-      return {
-        booksArr: []
-      }
-    },
-    created() {
-      this.index()
-    },
-    methods: {
-      index() {
-        this.booksArr = this.books
-      },
-      async handleClickEdit(bookId) {
-        try {
-          const {
-            data: { book }
-          } = await axios.get(`/books/getBook/${bookId}`)
-          this.$parent.handleEditBook(book)
-        } catch (error) {
-          console.error(error)
-        }
-      },
-      // Se pasa todo el libro solo como por tener un approach diferente
-      async handleClickDelete(book) {
-        try {
-          const result = await swal.fire({
-            icon: 'info',
-            title: 'Quieres eliminar el libro?',
-            showCancelButton: true,
-            confirmButtonText: 'Eliminar',
-            cancelButtonText: 'Cancelar'
-          })
+	import axios from 'axios'
+	import swal from 'sweetalert2'
+	import $ from 'jquery'
+	export default {
+		name: 'BooksTable',
+		components: [],
+		data() {
+			return {
+				load: false,
+				booksArr: [],
+				dataTable: {}
+			}
+		},
+		mounted() {
+			this.index()
+		},
+		methods: {
+			async index() {
+				this.mountDataTable()
+			},
+			getEvent(event) {
+				const button = event.target
+				if (button.getAttribute('role') === 'edit') {
+					this.handleClickEdit(button.getAttribute('data-id'))
+				} else {
+					this.handleClickDelete(button.getAttribute('data-id'))
+				}
+			},
+			async fetchBooks() {
+				try {
+					const {
+						data: { books }
+					} = await axios.get('books/getAllBooks')
+					return books
+				} catch (error) {
+					console.error(error)
+					return []
+				}
+			},
+			mountDataTable() {
+				this.dataTable = $('#bookTable').DataTable({
+					processing: true,
+					serverSide: true,
+					ajax: {
+						url: '/books/getAllBooksDataTable'
+					},
+					columns: [
+						{ data: 'title' },
+						{ data: 'author.name' },
+						{ data: 'stock' },
+						{ data: 'action' }
+					]
+				})
+			},
+			async handleClickEdit(bookId) {
+				try {
+					this.load = false
+					const { data } = await axios.get(`/books/getBook/${bookId}`)
+					this.index()
+					this.$parent.handleEditBook(data.book)
+				} catch (error) {
+					console.error(error)
+				}
+			},
+			// Se pasa todo el libro solo como por tener un approach diferente
+			async handleClickDelete(bookId) {
+				try {
+					const result = await swal.fire({
+						icon: 'info',
+						title: 'Quieres eliminar el libro?',
+						showCancelButton: true,
+						confirmButtonText: 'Eliminar',
+						cancelButtonText: 'Cancelar'
+					})
 
-          /* Read more about isConfirmed, isDenied below */
-          if (!result.isConfirmed) return
+					/* Read more about isConfirmed, isDenied below */
+					if (!result.isConfirmed) return
 
-          await axios.delete(`/books/DeleteBook/${book.id}`)
+					this.dataTable.destroy()
+					this.load = false
+					await axios.delete(`/books/DeleteBook/${bookId}`)
 
-          swal.fire({
-            icon: 'success',
-            title: 'Felicitaciones!',
-            text: 'Tu libro fue eliminado',
-            showConfirmButton: false,
-            timer: 1500
-          })
-          this.$parent.handleRefreshBooks()
-        } catch (error) {
-          console.error(error)
-          swal.fire({
-            icon: 'error',
-            title: 'Ops...',
-            text: 'Algo salió mal'
-          })
-        }
-      }
-    }
-  }
+					this.index()
+					swal.fire({
+						icon: 'success',
+						title: 'Felicitaciones!',
+						text: 'Tu libro fue eliminado',
+						showConfirmButton: false,
+						timer: 1500
+					})
+					this.$parent.handleRefreshBooks()
+				} catch (error) {
+					console.error(error)
+					swal.fire({
+						icon: 'error',
+						title: 'Ops...',
+						text: 'Algo salió mal'
+					})
+				}
+			}
+		}
+	}
 </script>
 
 <template>
-  <section class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Autor</th>
-          <th>Stock</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(book, index) in books" :key="book.id">
-          <th>{{ index + 1 }}</th>
-          <td>{{ book.title }}</td>
-          <td>{{ book.author.name }}</td>
-          <td>{{ book.stock }}</td>
-          <td>
-            <button class="btn btn-info btn-sm mx-2" @click="handleClickEdit(book.id)">
-              editar
-            </button>
-            <button class="btn btn-danger btn-sm mx-2" @click="handleClickDelete(book)">
-              eliminar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+	<section class="table-responsive">
+		<table class="table" id="bookTable" @click="getEvent">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Autor</th>
+					<th>Stock</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</section>
 </template>
