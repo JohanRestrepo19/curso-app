@@ -1,3 +1,19 @@
+<template>
+	<section class="table-responsive">
+		<table class="table" id="bookTable" @click="getEvent">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Autor</th>
+					<th>Stock</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</section>
+</template>
+
 <script>
 	import axios from 'axios'
 	import swal from 'sweetalert2'
@@ -102,19 +118,3 @@
 		}
 	}
 </script>
-
-<template>
-	<section class="table-responsive">
-		<table class="table" id="bookTable" @click="getEvent">
-			<thead>
-				<tr>
-					<th>Nombre</th>
-					<th>Autor</th>
-					<th>Stock</th>
-					<th>Acciones</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-	</section>
-</template>

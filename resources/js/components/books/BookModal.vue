@@ -1,103 +1,3 @@
-<script>
-	import axios from 'axios'
-	import swal from 'sweetalert2'
-
-	export default {
-		props: ['book_data'],
-		data() {
-			return {
-				isCreating: true,
-				categories: [],
-				authors: [],
-				book: {},
-				bookImage: null
-			}
-		},
-		created() {
-			this.index()
-		},
-		methods: {
-			async index() {
-				const [categories, authors] = await Promise.all([
-					this.fetchCategories(),
-					this.fetchAuthors()
-				])
-				this.categories = categories
-				this.authors = authors
-				this.setBook()
-			},
-			setBook() {
-				if (!this.book_data) return
-				this.book = { ...this.book_data }
-				this.isCreating = false
-			},
-			async fetchCategories() {
-				try {
-					const {
-						data: { categories }
-					} = await axios.get('/categories/GetAllCategories')
-					return categories
-				} catch (error) {
-					console.error(error)
-					return []
-				}
-			},
-			async fetchAuthors() {
-				try {
-					const {
-						data: { authors }
-					} = await axios.get('/authors/GetAllAuthors')
-					return authors
-				} catch (error) {
-					console.error(error)
-					return []
-				}
-			},
-			async handleSubmit(event) {
-				event.preventDefault()
-
-				const formData = this.makeFormData()
-				try {
-					this.isCreating
-						? await axios.post('/books/SaveBook', formData)
-						: await axios.post(`/books/UpdateBook/${this.book.id}`, formData)
-
-					swal.fire({
-						icon: 'success',
-						title: 'Felicitaciones!',
-						text: 'Tu libro fue almacenado',
-						showConfirmButton: false,
-						timer: 1500
-					})
-					this.$parent.handleCloseModal()
-				} catch (error) {
-					console.error(error)
-					swal.fire({
-						icon: 'error',
-						title: 'Ops...',
-						text: 'Algo salió mal'
-					})
-				}
-			},
-			handleLoadImage(event) {
-				this.bookImage = event.target.files[0]
-			},
-			makeFormData() {
-				const formData = new FormData()
-
-				if (this.bookImage) formData.append('image', this.bookImage, this.bookImage.name)
-				formData.append('title', this.book.title)
-				formData.append('stock', this.book.stock)
-				formData.append('description', this.book.description)
-				formData.append('category_id', this.book.category_id)
-				formData.append('author_id', this.book.author_id)
-
-				return formData
-			}
-		}
-	}
-</script>
-
 <template>
 	<!-- Modal -->
 	<div class="modal fade" id="bookModal" tabindex="-1" aria-hidden="true">
@@ -205,3 +105,103 @@
 		</div>
 	</div>
 </template>
+
+<script>
+	import axios from 'axios'
+	import swal from 'sweetalert2'
+
+	export default {
+		props: ['book_data'],
+		data() {
+			return {
+				isCreating: true,
+				categories: [],
+				authors: [],
+				book: {},
+				bookImage: null
+			}
+		},
+		created() {
+			this.index()
+		},
+		methods: {
+			async index() {
+				const [categories, authors] = await Promise.all([
+					this.fetchCategories(),
+					this.fetchAuthors()
+				])
+				this.categories = categories
+				this.authors = authors
+				this.setBook()
+			},
+			setBook() {
+				if (!this.book_data) return
+				this.book = { ...this.book_data }
+				this.isCreating = false
+			},
+			async fetchCategories() {
+				try {
+					const {
+						data: { categories }
+					} = await axios.get('/categories/GetAllCategories')
+					return categories
+				} catch (error) {
+					console.error(error)
+					return []
+				}
+			},
+			async fetchAuthors() {
+				try {
+					const {
+						data: { authors }
+					} = await axios.get('/authors/GetAllAuthors')
+					return authors
+				} catch (error) {
+					console.error(error)
+					return []
+				}
+			},
+			async handleSubmit(event) {
+				event.preventDefault()
+
+				const formData = this.makeFormData()
+				try {
+					this.isCreating
+						? await axios.post('/books/SaveBook', formData)
+						: await axios.post(`/books/UpdateBook/${this.book.id}`, formData)
+
+					swal.fire({
+						icon: 'success',
+						title: 'Felicitaciones!',
+						text: 'Tu libro fue almacenado',
+						showConfirmButton: false,
+						timer: 1500
+					})
+					this.$parent.handleCloseModal()
+				} catch (error) {
+					console.error(error)
+					swal.fire({
+						icon: 'error',
+						title: 'Ops...',
+						text: 'Algo salió mal'
+					})
+				}
+			},
+			handleLoadImage(event) {
+				this.bookImage = event.target.files[0]
+			},
+			makeFormData() {
+				const formData = new FormData()
+
+				if (this.bookImage) formData.append('image', this.bookImage, this.bookImage.name)
+				formData.append('title', this.book.title)
+				formData.append('stock', this.book.stock)
+				formData.append('description', this.book.description)
+				formData.append('category_id', this.book.category_id)
+				formData.append('author_id', this.book.author_id)
+
+				return formData
+			}
+		}
+	}
+</script>

@@ -1,3 +1,28 @@
+<template>
+	<div class="card m-5">
+		<div class="card-header d-flex justify-content-between">
+			<h2>Libros</h2>
+			<button @click="handleOpenModal()" class="btn btn-primary">Crear libro</button>
+		</div>
+
+		<div class="card-body">
+			<div v-if="loadingBooks" class="d-flex justify-content-center my-4">
+				<div class="spinner-border text-info" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+			</div>
+
+			<section v-else>
+				<!-- TODO: Implementar la función de fetch dentro de componente -->
+				<books-table ref="table" />
+			</section>
+		</div>
+		<section v-if="isModalLoaded">
+			<book-modal :book_data="book" />
+		</section>
+	</div>
+</template>
+
 <script>
 	import axios from 'axios'
 	import { Modal } from 'bootstrap'
@@ -66,28 +91,3 @@
 		}
 	}
 </script>
-
-<template>
-	<div class="card m-5">
-		<div class="card-header d-flex justify-content-between">
-			<h2>Libros</h2>
-			<button @click="handleOpenModal()" class="btn btn-primary">Crear libro</button>
-		</div>
-
-		<div class="card-body">
-			<div v-if="loadingBooks" class="d-flex justify-content-center my-4">
-				<div class="spinner-border text-info" role="status">
-					<span class="visually-hidden">Loading...</span>
-				</div>
-			</div>
-
-			<section v-else>
-				<!-- TODO: Implementar la función de fetch dentro de componente -->
-				<books-table ref="table" />
-			</section>
-		</div>
-		<section v-if="isModalLoaded">
-			<book-modal :book_data="book" />
-		</section>
-	</div>
-</template>
